@@ -1,11 +1,23 @@
 import argparse
-import focusedme
+from focusedme import View
+
+BANNER = r"""
+  __                              _ __  __
+ / _|                            | |  \/  |
+| |_ ___   ___ _   _ ___  ___  __| | \  / | ___
+|  _/ _ \ / __| | | / __|/ _ \/ _` | |\/| |/ _ \
+| || (_) | (__| |_| \__ \  __/ (_| | |  | |  __/
+|_| \___/ \___|\__,_|___/\___|\__,_|_|  |_|\___|""".strip(
+    "\r\n"
+)
+NUM_ROUNDS = 3
+LENGHT_ARGS = {"focus_time": 25, "short_break": 5, "long_break": 25}
 
 
 def main():
     """ parse cli arguments and start sequence of object calls"""
 
-    print(focusedme.BANNER, "\n")
+    print(BANNER, "\n")
     print(" __ A Pomodoro Timer ___" + "\n\n")
     parser = argparse.ArgumentParser(
         description="Welcome to the focusedMe app. Start your Pomodoro timer"
@@ -43,8 +55,8 @@ def main():
 
     args = parser.parse_args()
     # dictionary that store Pomodor initialization parameters
-    len_args = focusedme.LENGHT_ARGS
-    num_rounds = focusedme.NUM_ROUNDS
+    len_args = LENGHT_ARGS
+    num_rounds = NUM_ROUNDS
     if args.focus_time:
         len_args["focus_time"] = args.focus_time
     if args.short_break:
@@ -55,7 +67,7 @@ def main():
         num_rounds = args.num_rounds
 
     # initialize view
-    view = focusedme.View()
+    view = View()
     # start pomodoro
     view.run(len_args, num_rounds)
 

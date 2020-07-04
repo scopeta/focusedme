@@ -24,18 +24,9 @@ RESULTS = r"""
  \_/ \_/ \_/ \_/   \_/ \_/ \_/ \_/ \_/ \_/ \_/ """.strip(
     "\r\n"
 )
-BANNER = r"""
-  __                              _ __  __
- / _|                            | |  \/  |
-| |_ ___   ___ _   _ ___  ___  __| | \  / | ___
-|  _/ _ \ / __| | | / __|/ _ \/ _` | |\/| |/ _ \
-| || (_) | (__| |_| \__ \  __/ (_| | |  | |  __/
-|_| \___/ \___|\__,_|___/\___|\__,_|_|  |_|\___|""".strip(
-    "\r\n"
-)
+
 GOODBYE = "\n\nThanks for using focusedMe. Goodbye!\n\n"
 LENGHT_ARGS = {"focus_time": 25, "short_break": 5, "long_break": 25}
-NUM_ROUNDS = 3
 SOUND = True
 
 
