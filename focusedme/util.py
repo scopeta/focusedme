@@ -1,3 +1,9 @@
+"""
+This file was copied from
+https://github.com/JaDogg/pydoro
+to solve in app path references
+"""
+
 import os
 import time
 

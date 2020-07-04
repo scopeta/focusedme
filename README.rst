@@ -23,6 +23,17 @@ A minimalist Pomodoro timer that runs in your terminal
 * Documentation: https://focusedme.readthedocs.io.
 
 
+Installation and usage
+----------------------
+Install via pip
+    $ pip install focusedme
+
+Read instructions 
+    $ focusedme -h
+
+Common usage (default pomodoro values)
+    $ focusedme
+
 
 Overview
 --------
@@ -57,3 +68,6 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+
+`JaDogg_: <https://github.com/JaDogg/pydoro>`_ for the in_app_path function in util.py module
+`TaylorSMarks: <https://github.com/TaylorSMarks/playsound>`_ for the playsound module
