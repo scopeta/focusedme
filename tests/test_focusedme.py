@@ -5,7 +5,7 @@
 import pytest
 
 
-from focusedme import focusedme
+import focusedme
 
 
 @pytest.fixture
