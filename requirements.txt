@@ -1,0 +1,4 @@
+wheel>=0.22
+dataclasses
+playsound
+pytest
