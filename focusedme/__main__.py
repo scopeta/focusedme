@@ -1,5 +1,6 @@
 import argparse
-from focusedme.focusedme import View
+import focusedme
+
 
 BANNER = r"""
   __                              _ __  __
@@ -67,7 +68,7 @@ def main():
         num_rounds = args.num_rounds
 
     # initialize view
-    view = View()
+    view = focusedme.View()
     # start pomodoro
     view.run(len_args, num_rounds)
 
