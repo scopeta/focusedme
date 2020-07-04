@@ -1,5 +1,5 @@
 import argparse
-from focusedme import View
+from focusedme.focusedme import View
 
 BANNER = r"""
   __                              _ __  __
