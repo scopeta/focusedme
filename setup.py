@@ -34,7 +34,6 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description="A minimalist Pomodoro timer that runs in your terminal",
-    entry_points={"console_scripts": ["focusedme=focusedme:main"]},
     install_requires=requirements,
     license="MIT license",
     long_description=readme + "\n\n" + history,
@@ -46,6 +45,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/scopeta/focusedme",
-    version="0.1.12",
+    version="0.1.13",
     zip_safe=False,
 )
