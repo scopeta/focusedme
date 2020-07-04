@@ -41,11 +41,13 @@ setup(
     keywords="focusedme timer pomodoro",
     name="focusedme",
     packages=find_packages(),
-    entry_points={"console_scripts": ["focusedme = focusedme.focusedme:main"]},
+    entry_points={
+        "console_scripts": ["focusedme = focusedme.focusedme.focusedme:main"]
+    },
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/scopeta/focusedme",
-    version="0.1.15",
+    version="0.1.16",
     zip_safe=False,
 )
