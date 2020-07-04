@@ -12,7 +12,7 @@ import sys
 import time
 import argparse
 from timeit import default_timer
-from util import in_app_path
+from focusedme.util import in_app_path
 from dataclasses import dataclass
 from playsound import playsound
 
