@@ -36,6 +36,7 @@ setup(
     description="A minimalist Pomodoro timer that runs in your terminal",
     install_requires=requirements,
     license="MIT license",
+    package_data={"": ["*.rst", "*.wav"]},
     long_description=readme + "\n\n" + history,
     include_package_data=True,
     keywords="focusedme timer pomodoro",
@@ -46,6 +47,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/scopeta/focusedme",
-    version="0.1.20",
+    version="0.1.22",
     zip_safe=False,
 )

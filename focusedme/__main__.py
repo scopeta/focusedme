@@ -13,7 +13,7 @@ import time
 import argparse
 from timeit import default_timer
 from dataclasses import dataclass
-from playsound import playsound
+from playsound import playsound, PlaysoundException
 
 import attr
 
@@ -58,7 +58,12 @@ class View:
 
     @classmethod
     def ring_bell(cls):
-        playsound("Ring01.wav")
+        try:
+            playsound("Ring01.wav")
+        except PlaysoundException:
+            # try again with directory path in case
+            #  code is call from module level
+            playsound("focusedme\\Ring01.wav")
 
     def show_time(self, remainder, num_round, num_session, type_session):
         """ show timer countdown in terminal. Receives the remainder time
