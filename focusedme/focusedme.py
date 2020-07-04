@@ -54,7 +54,7 @@ class View:
 
     @classmethod
     def ring_bell(cls):
-        playsound("focusedme\\focusedme\\Ring01.wav")
+        playsound("focusedme\\Ring01.wav")
 
     def show_time(self, remainder, num_round, num_session, type_session):
         """ show timer countdown in terminal. Receives the remainder time

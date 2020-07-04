@@ -1,5 +1,5 @@
 import argparse
-from focusedme import focusedme
+import focusedme
 
 
 def main():
