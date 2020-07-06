@@ -34,7 +34,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description="A minimalist Pomodoro timer that runs in your terminal",
-    install_requires=requirements,
+    install_requires=["attrs", "dataclasses", "playsound"],
     license="MIT license",
     package_data={"": ["*.rst", "*.wav"]},
     long_description=readme + "\n\n" + history,
