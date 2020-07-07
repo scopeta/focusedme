@@ -6,8 +6,8 @@ focusedMe
 .. image:: https://img.shields.io/pypi/v/focusedme.svg
         :target: https://pypi.python.org/pypi/focusedme
 
-.. image:: https://img.shields.io/travis/scopeta/focusedme.svg
-        :target: https://travis-ci.com/scopeta/focusedme
+.. image:: https://travis-ci.com/scopeta/focusedme.svg?branch=master
+        :target: https://travis-ci.com/scopeta/focusedme        
 
 .. image:: https://readthedocs.org/projects/focusedme/badge/?version=latest
         :target: https://focusedme.readthedocs.io/en/latest/?badge=latest
