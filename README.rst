@@ -34,7 +34,7 @@ Read instructions
 Common usage (default pomodoro values)
     $ focusedme
 
-.. image:: ./docs/images/UI.png
+.. image:: https://raw.githubusercontent.com/scopeta/focusedme/master/docs/images/UI.png
 
 
 Overview
