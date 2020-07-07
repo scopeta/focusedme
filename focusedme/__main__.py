@@ -11,12 +11,15 @@ as well as allow them to control its progress.
 import sys
 import time
 import argparse
+import attr
+
 from timeit import default_timer
-from focusedme.util import in_app_path
 from dataclasses import dataclass
 from playsound import playsound
 
-import attr
+# sys.path.append(".") TODO refactoring
+# sys.path.append("..")
+from util import Colors, in_app_path  # noqa: E402
 
 
 BANNER = r"""
@@ -84,9 +87,9 @@ class View:
         """ create text from logged data and return it to be plotted to user
         in the terminal """
 
-        print()
+        print(Colors.fg.green)
         print(RESULTS)
-        print()
+        print(Colors.reset)
 
         for dt in logged_data:
             if "Round" in dt:
@@ -349,8 +352,11 @@ class Log:
 def main():
     """ parse cli arguments and start sequence of object calls"""
 
+    print(Colors.fg.green, "")
     print(BANNER, "\n")
-    print(" __ A Pomodoro Timer ___" + "\n\n")
+    print(Colors.reset, "")
+
+    print(Colors.fg.red + " __ A Pomodoro Timer ___" + Colors.reset + "\n\n")
     parser = argparse.ArgumentParser(
         description="Welcome to the focusedMe app. Start your Pomodoro timer"
         " and enjoy the focus! (Stop it with Ctrl+c)",

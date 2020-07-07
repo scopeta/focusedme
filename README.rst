@@ -34,6 +34,8 @@ Read instructions
 Common usage (default pomodoro values)
     $ focusedme
 
+.. image:: docs\\images\\UI.png
+
 
 Overview
 --------
@@ -70,4 +72,5 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 
 `JaDogg_: <https://github.com/JaDogg/pydoro>`_ for the in_app_path function in util.py module
+
 `TaylorSMarks: <https://github.com/TaylorSMarks/playsound>`_ for the playsound module
