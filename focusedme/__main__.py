@@ -17,10 +17,9 @@ from timeit import default_timer
 from dataclasses import dataclass
 from playsound import playsound
 
-# sys.path.append(".") TODO refactoring
-# sys.path.append("..")
-from util import Colors, in_app_path  # noqa: E402
-
+sys.path.append(".")
+sys.path.append("focusedme")
+from util import in_app_path  # noqa: E402
 
 BANNER = r"""
   __                              _ __  __
@@ -51,6 +50,34 @@ SOUND = True
 class View:
     """class responsible for user interaction through terminal."""
 
+    @classmethod
+    def getColor(cls, color):
+        """ Print fore ground colors in terminal
+        use reset value to cancel all colors
+        """
+
+        dict_color = {
+            "reset": "\033[0m",
+            "bold": "\033[01m",
+            "black": "\033[30m",
+            "red": "\033[31m",
+            "green": "\033[32m",
+            "orange": "\033[33m",
+            "blue": "\033[34m",
+            "purple": "\033[35m",
+            "cyan": "\033[36m",
+            "lightgrey": "\033[37m",
+            "darkgrey": "\033[90m",
+            "lightred": "\033[91m",
+            "lightgreen": "\033[92m",
+            "yellow": "\033[93m",
+            "lightblue": "\033[94m",
+            "pink": "\033[95m",
+            "lightcyan": "\033[96m",
+        }
+
+        return dict_color[color]
+
     def __format_time(self, remainder):
         """Method that receives timer info and format to present
         in the terminal.
@@ -64,9 +91,30 @@ class View:
     def ring_bell(cls):
         playsound(in_app_path("Ring01.wav"))
 
+    def __get_colore_type(self, stype):
+        """return the type string with the chosen color"""
+        colored_type = stype
+        if stype == "FOCUS TIME":
+            colored_type = (
+                self.getColor("lightred") + stype + self.getColor("reset")
+            )
+        elif stype == "SHORT BREAK":
+            colored_type = (
+                self.getColor("lightgreen") + stype + self.getColor("reset")
+            )
+        elif stype == "LONG BREAK":
+            colored_type = (
+                self.getColor("lightblue") + stype + self.getColor("reset")
+            )
+        return colored_type
+
     def show_time(self, remainder, num_round, num_session, type_session):
         """ show timer countdown in terminal. Receives the remainder time
         for the session and print progress for the user"""
+
+        colored_type = self.__get_colore_type(
+            type_session.replace("_", " ").upper()
+        )  # noqa E501
 
         print(
             "Round",
@@ -75,7 +123,7 @@ class View:
             "Session",
             num_session,
             "-",
-            type_session.replace("_", " ").upper(),
+            colored_type,
             ": ",
             self.__format_time(remainder),
             end="",
@@ -87,9 +135,9 @@ class View:
         """ create text from logged data and return it to be plotted to user
         in the terminal """
 
-        print(Colors.fg.green)
+        print(self.getColor("green"))
         print(RESULTS)
-        print(Colors.reset)
+        print(self.getColor("reset"))
 
         for dt in logged_data:
             if "Round" in dt:
@@ -352,11 +400,18 @@ class Log:
 def main():
     """ parse cli arguments and start sequence of object calls"""
 
-    print(Colors.fg.green, "")
     print(BANNER, "\n")
-    print(Colors.reset, "")
 
-    print(Colors.fg.red + " __ A Pomodoro Timer ___" + Colors.reset + "\n\n")
+    print(
+        View.getColor("green")
+        + " __ "
+        + View.getColor("reset")
+        + "A Pomodoro Timer"
+        + View.getColor("red")
+        + " ___"
+        + View.getColor("reset")
+        + "\n\n"
+    )
     parser = argparse.ArgumentParser(
         description="Welcome to the focusedMe app. Start your Pomodoro timer"
         " and enjoy the focus! (Stop it with Ctrl+c)",
