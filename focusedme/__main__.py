@@ -428,6 +428,8 @@ class Config:
 
 
     def show_init(len_args):
+        """ prints the 'time' values that are saved in the init files.
+        """
         file = in_app_path("../config/fm.init")
         config = ConfigParser()
         config.read(file)
