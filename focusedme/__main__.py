@@ -16,6 +16,7 @@ import attr
 from timeit import default_timer
 from dataclasses import dataclass
 from playsound import playsound
+from configparser import ConfigParser
 
 sys.path.append(".")
 sys.path.append("focusedme")
@@ -30,8 +31,6 @@ BANNER = r"""
 |_| \___/ \___|\__,_|___/\___|\__,_|_|  |_|\___|""".strip(
     "\r\n"
 )
-NUM_ROUNDS = 3
-LENGHT_ARGS = {"focus_time": 25, "short_break": 5, "long_break": 25}
 SECONDS_PER_MIN = 60
 RESULTS = r"""
   _   _   _   _     _   _   _   _   _   _   _
@@ -42,7 +41,6 @@ RESULTS = r"""
 )
 
 GOODBYE = "\n\nThanks for using focusedMe. Goodbye!\n\n"
-LENGHT_ARGS = {"focus_time": 25, "short_break": 5, "long_break": 25}
 SOUND = True
 
 
@@ -396,6 +394,38 @@ class Log:
 
         plot(graphic)
 
+@attr.s
+class Config:
+    """data class that store the attributes of
+    different default values used on the program
+    """
+    def load_init():
+        """ return the a object array with the lenght os the default values
+        """
+        file = in_app_path("../config/fm.init")
+        config = ConfigParser()
+        config.read(file)
+
+        len_args = {}
+
+        for section in list(config['time']):
+            len_args[section] = int(config['time'][section])
+
+        return len_args
+
+    def save_init(len_args):
+        """ save the new values as the default values
+        """
+        file = in_app_path("../config/fm.init")
+        config = ConfigParser()
+        config.read(file)
+
+        for section in list(config['time']):
+            config.set('time',section, str(len_args[section]))
+
+        with open(file, 'w') as configfile:
+            config.write(configfile)
+
 
 def main():
     """ parse cli arguments and start sequence of object calls"""
@@ -415,7 +445,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Welcome to the focusedMe app. Start your Pomodoro timer"
         " and enjoy the focus! (Stop it with Ctrl+c)",
-        usage="%(prog)s [-f] [-sb] [-lb] [-r]",
+        usage="%(prog)s [-f] [-sb] [-lb] [-r] [-s]",
     )
     parser.add_argument(
         "-r",
@@ -445,24 +475,31 @@ def main():
         metavar="",
         help="duration in minutes of the focus session, default is 25 mins",
     )
+    parser.add_argument(
+        "-s",
+        "--save",
+        action="store_true",
+        help="save the duration in minutes os the session/break as new default values",
+
+    )
 
     args = parser.parse_args()
+    len_args = Config.load_init()
     # dictionary that store Pomodor initialization parameters
-    len_args = LENGHT_ARGS
-    num_rounds = NUM_ROUNDS
     if args.focus_time:
-        len_args["focus_time"] = args.focus_time
+        len_args['focus_time'] = args.focus_time
     if args.short_break:
-        len_args["short_break"] = args.short_break
+        len_args['short_break'] = args.short_break
     if args.long_break:
-        len_args["long_break"] = args.long_break
+        len_args['long_break'] = args.long_break
     if args.num_rounds:
-        num_rounds = args.num_rounds
-
+        len_args['num_rounds'] = args.num_rounds
+    if args.save:
+        Config.save_init(len_args)
     # initialize view
     view = View()
     # start pomodoro
-    view.run(len_args, num_rounds)
+    view.run(len_args, len_args['num_rounds'])
 
 
 if __name__ == "__main__":
