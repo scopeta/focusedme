@@ -427,6 +427,20 @@ class Config:
             config.write(configfile)
 
 
+    def show_init(len_args):
+        """ prints the 'time' values that are saved in the init files.
+        """
+        file = in_app_path("../config/fm.init")
+        config = ConfigParser()
+        config.read(file)
+
+        print("Default Values:")
+        print(View.getColor("green") + "   Focus Time: " + str(len_args["focus_time"]))
+        print(View.getColor("orange") + "   Short Break: " + str(len_args["short_break"]))
+        print(View.getColor("red") + "   Long Break: " + str(len_args["long_break"]))
+        print(View.getColor("blue") + "   Rounds: " + str(len_args["num_rounds"]))
+        print( View.getColor("reset") )
+
 def main():
     """ parse cli arguments and start sequence of object calls"""
 
@@ -496,6 +510,7 @@ def main():
         len_args['num_rounds'] = args.num_rounds
     if args.save:
         Config.save_init(len_args)
+        Config.show_init(len_args)
     # initialize view
     view = View()
     # start pomodoro
