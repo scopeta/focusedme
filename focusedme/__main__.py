@@ -411,6 +411,13 @@ class Config:
         for section in list(config['time']):
             len_args[section] = int(config['time'][section])
 
+        for section in list(config['sound']):
+            sound_enabled = str(config['sound'][section])
+
+        if sound_enabled:
+            SOUND = bool(sound_enabled)
+            len_args[section] = SOUND
+
         return len_args
 
     def save_init(len_args):
@@ -422,6 +429,9 @@ class Config:
 
         for section in list(config['time']):
             config.set('time',section, str(len_args[section]))
+
+        for section in list(config['sound']):
+            config.set('sound',section, str(len_args[section]))
 
         with open(file, 'w') as configfile:
             config.write(configfile)
@@ -439,6 +449,7 @@ class Config:
         print(View.getColor("orange") + "   Short Break: " + str(len_args["short_break"]))
         print(View.getColor("red") + "   Long Break: " + str(len_args["long_break"]))
         print(View.getColor("blue") + "   Rounds: " + str(len_args["num_rounds"]))
+        print(View.getColor("purple") + "   Sound: " + str(len_args["sound"]))
         print( View.getColor("reset") )
 
 def main():
