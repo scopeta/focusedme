@@ -4,3 +4,6 @@ short_break = 5
 long_break = 25
 num_rounds = 3
 
+[sound]
+sound = True
+
