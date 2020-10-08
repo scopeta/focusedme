@@ -41,8 +41,6 @@ RESULTS = r"""
 )
 
 GOODBYE = "\n\nThanks for using focusedMe. Goodbye!\n\n"
-SOUND = True
-
 
 @attr.s
 class View:
@@ -86,8 +84,8 @@ class View:
         return "{:00}min {:00}s remaining   ".format(minutes, seconds)
 
     @classmethod
-    def ring_bell(cls):
-        playsound(in_app_path("Ring01.wav"))
+    def ring_bell(cls, PATH):
+        playsound(in_app_path(PATH))
 
     def __get_colore_type(self, stype):
         """return the type string with the chosen color"""
@@ -152,18 +150,18 @@ class View:
         print("[legend: (X) completed sessions, (O) skipped sessions]")
         print("______________________________________________________\n")
 
-    def run(self, len_args, num_rounds):
+    def run(self, time_args, sound_args):
         """ method that orchestrates overal execution """
 
         # initialize with parameters informed through cli arguments
-        pomodoro = Pomodoro(len_args, num_rounds)
+        pomodoro = Pomodoro(time_args, time_args['num_rounds'])
         rounds = pomodoro.create_rounds()
         log = Log()
         tracker = Tracker(rounds, log)
 
         while True:
             try:
-                tracker.start(self.show_time)
+                tracker.start(self.show_time, sound_args)
             except KeyboardInterrupt:
                 user_cmd = input(
                     "\n\nWhat would you like to do?"
@@ -195,11 +193,14 @@ class Tracker:
     def __cur_time(self):
         return int(default_timer())
 
-    def start(self, show_time):
+    def start(self, show_time, sound_args):
         """method to process the list of rounds.
         It tracks and saves progress while sending visual information
          for the UI function received as a parameter
         """
+
+        SOUND = sound_args['sound']
+        PATH = sound_args['path']
 
         # outter loop - runs until end of rounds
         while True:
@@ -241,7 +242,7 @@ class Tracker:
                 cur_round.update_session("done")
                 self.log.save_rounds(self.rounds)
                 if SOUND:
-                    View.ring_bell()
+                    View.ring_bell(PATH)
 
     def __get_round(self):
         """" return the current round
@@ -406,21 +407,22 @@ class Config:
         config = ConfigParser()
         config.read(file)
 
-        len_args = {}
+        time_args = {}
+        sound_args = {}
+
 
         for section in list(config['time']):
-            len_args[section] = int(config['time'][section])
+            time_args[section] = int(config['time'][section])
 
         for section in list(config['sound']):
-            sound_enabled = str(config['sound'][section])
+            sound_args[section] = str(config['sound'][section])
 
-        if sound_enabled:
-            SOUND = bool(sound_enabled)
-            len_args[section] = SOUND
+        if sound_args['sound']:
+            SOUND = bool(sound_args['sound'])
 
-        return len_args
+        return time_args, sound_args
 
-    def save_init(len_args):
+    def save_init(time_args, sound_args):
         """ save the new values as the default values
         """
         file = in_app_path("../config/fm.init")
@@ -428,16 +430,16 @@ class Config:
         config.read(file)
 
         for section in list(config['time']):
-            config.set('time',section, str(len_args[section]))
+            config.set('time',section, str(time_args[section]))
 
         for section in list(config['sound']):
-            config.set('sound',section, str(len_args[section]))
+            config.set('sound',section, str(sound_args[section]))
 
         with open(file, 'w') as configfile:
             config.write(configfile)
 
 
-    def show_init(len_args):
+    def show_init(time_args, sound_args):
         """ prints the 'time' values that are saved in the init files.
         """
         file = in_app_path("../config/fm.init")
@@ -445,11 +447,11 @@ class Config:
         config.read(file)
 
         print("Default Values:")
-        print(View.getColor("green") + "   Focus Time: " + str(len_args["focus_time"]))
-        print(View.getColor("orange") + "   Short Break: " + str(len_args["short_break"]))
-        print(View.getColor("red") + "   Long Break: " + str(len_args["long_break"]))
-        print(View.getColor("blue") + "   Rounds: " + str(len_args["num_rounds"]))
-        print(View.getColor("purple") + "   Sound: " + str(len_args["sound"]))
+        print(View.getColor("green") + "   Focus Time: " + str(time_args["focus_time"]))
+        print(View.getColor("orange") + "   Short Break: " + str(time_args["short_break"]))
+        print(View.getColor("red") + "   Long Break: " + str(time_args["long_break"]))
+        print(View.getColor("blue") + "   Rounds: " + str(time_args["num_rounds"]))
+        print(View.getColor("purple") + "   Sound: " + str(sound_args["sound"]))
         print( View.getColor("reset") )
 
 def main():
@@ -509,23 +511,23 @@ def main():
     )
 
     args = parser.parse_args()
-    len_args = Config.load_init()
+    time_args, sound_args = Config.load_init()
     # dictionary that store Pomodor initialization parameters
     if args.focus_time:
-        len_args['focus_time'] = args.focus_time
+        time_args['focus_time'] = args.focus_time
     if args.short_break:
-        len_args['short_break'] = args.short_break
+        time_args['short_break'] = args.short_break
     if args.long_break:
-        len_args['long_break'] = args.long_break
+        time_args['long_break'] = args.long_break
     if args.num_rounds:
-        len_args['num_rounds'] = args.num_rounds
+        time_args['num_rounds'] = args.num_rounds
     if args.save:
-        Config.save_init(len_args)
-        Config.show_init(len_args)
+        Config.save_init(time_args, sound_args)
+        # Config.show_init(time_args, sound_args)
     # initialize view
     view = View()
     # start pomodoro
-    view.run(len_args, len_args['num_rounds'])
+    view.run(time_args, sound_args)
 
 
 if __name__ == "__main__":
