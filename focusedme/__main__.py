@@ -127,7 +127,7 @@ class View:
         )
         print("\r", end="", flush=True)
 
-    def plot(self, logged_data):
+    def plot(self, logged_data, time_args):
         """ create text from logged data and return it to be plotted to user
         in the terminal """
 
@@ -142,7 +142,7 @@ class View:
                 print(
                     "".join(map(str, dt)),
                     "-",
-                    dt.count("X") * LENGHT_ARGS["focus_time"],
+                    dt.count("X") * time_args["focus_time"],
                     "minutes",
                 )
                 print()
@@ -171,7 +171,7 @@ class View:
                 if user_cmd == "S":
                     print("\n\nSkipping to next session..\n\n")
                 elif user_cmd == "P":
-                    log.plot_results(self.plot)
+                    log.plot_results(self.plot, time_args)
                     print(GOODBYE)
                     sys.exit(0)
                 else:
@@ -373,7 +373,7 @@ class Log:
         """
         self.tracked_rounds = tracked_rounds
 
-    def plot_results(self, plot):
+    def plot_results(self, plot, time_args):
         """ return user friendly text with completion information
         about user's focus sessions
         """
@@ -393,7 +393,7 @@ class Log:
                 ]
             )
 
-        plot(graphic)
+        plot(graphic, time_args )
 
 @attr.s
 class Config:
