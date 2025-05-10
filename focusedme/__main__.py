@@ -10,6 +10,7 @@ as well as allow them to control its progress.
 from __future__ import annotations
 
 import argparse
+import subprocess  # add subprocess for mac audio playback
 import sys
 import time
 from configparser import ConfigParser
@@ -87,8 +88,17 @@ class View:
 
     @classmethod
     def ring_bell(cls, PATH: str) -> None:
-        wave_obj = sa.WaveObject.from_wave_file(in_app_path(PATH))
-        wave_obj.play()
+        audio_path = in_app_path(PATH)
+        try:
+            # on macOS use afplay to avoid simpleaudio crash
+            if sys.platform == "darwin":
+                subprocess.run(["afplay", audio_path], check=True)
+            else:
+                wave_obj = sa.WaveObject.from_wave_file(audio_path)
+                wave_obj.play()
+        except Exception:
+            # ignore playback errors
+            pass
 
     def __get_colore_type(self, stype: str) -> str:
         """return the type string with the chosen color"""
@@ -208,17 +218,17 @@ class Round:
         "long_break",
     )
 
-    def __attrs_post_init__(self) -> None:
+    def __post_init__(self) -> None:
         self.sessions = self.__build_new_round(self.len_args)
 
     def __build_new_round(self, len_args: dict[str, int]) -> list[Session]:
         """build a list of sessions that will define this round
         acording to len_args
         """
-        sessions = []
-        for session_type in self.round_template:
-            session = Session(session_type, len_args[session_type])
-            sessions.append(session)
+        sessions = [
+            Session(session_type, len_args[session_type])
+            for session_type in self.round_template
+        ]
         return sessions
 
     # def completed(self)
@@ -319,9 +329,6 @@ class Config:
         for section in list(config["sound"]):
             sound_args[section] = str(config["sound"][section])
 
-        if sound_args["sound"]:
-            bool(sound_args["sound"])
-
         return time_args, sound_args
 
     @staticmethod
@@ -364,25 +371,6 @@ class Config:
 
 
 @dataclass
-class Pomodoro:
-    """class responsible for creating rounds according to user parameters"""
-
-    len_args: dict[str, int] = field(default_factory=dict)
-    num_rounds: int = 3
-
-    # non init attributes
-    tracker: list = field(default_factory=list)
-
-    def create_rounds(self) -> list[Round]:
-        """create and return a list of rounds of size equal to num_rounds and
-        configured according to the length attributes.
-        """
-        rounds = [Round(self.len_args) for _ in range(self.num_rounds)]
-
-        return rounds
-
-
-@dataclass
 class Tracker:
     """Control timer according to session durations
     and trigger log saving and user interface updates
@@ -410,13 +398,13 @@ class Tracker:
 
         # outter loop - runs until end of rounds
         while True:
-
             # return the valid round, either a new one if completed
             # or the next one available
             self.current_round_idx = self.__get_round()
+
             # if the current round is already completed, there is
             # no round left and the loop should be broken
-            if self.rounds[self.current_round_idx].completed:
+            if self.rounds[self.current_round_idx].completed is True:
                 break
 
             # iterate over all session in a round()
@@ -447,7 +435,7 @@ class Tracker:
                         break
                 cur_round.update_session("done")
                 self.log.save_rounds(self.rounds)
-                if SOUND:
+                if SOUND in ("True", "1", "yes"):
                     View.ring_bell(PATH)
 
     def __get_round(self) -> int:
@@ -461,6 +449,25 @@ class Tracker:
             self.current_round_idx += 1
 
         return self.current_round_idx
+
+
+@dataclass
+class Pomodoro:
+    """class responsible for creating rounds according to user parameters"""
+
+    len_args: dict[str, int] = field(default_factory=dict)
+    num_rounds: int = 3
+
+    # non init attributes
+    tracker: Tracker = field(default_factory=Tracker)
+
+    def create_rounds(self) -> list[Round]:
+        """create and return a list of rounds of size equal to num_rounds and
+        configured according to the length attributes.
+        """
+        rounds = [Round(self.len_args) for _ in range(self.num_rounds)]
+
+        return rounds
 
 
 def main() -> None:
