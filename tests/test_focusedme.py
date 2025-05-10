@@ -2,10 +2,28 @@
 
 """Tests for `focusedme` package."""
 
+import sys
+from unittest import mock
+
 import pytest
 
 from focusedme import util
 from focusedme.__main__ import Config
+
+# Mock simpleaudio to avoid dependency issues in CI
+sys.modules["simpleaudio"] = mock.MagicMock()
+
+
+class MockWaveObject:
+    @classmethod
+    def from_wave_file(cls, file_path):
+        return cls()
+
+    def play(self):
+        return mock.MagicMock()
+
+
+sys.modules["simpleaudio"].WaveObject = MockWaveObject
 
 
 @pytest.fixture(scope="function")

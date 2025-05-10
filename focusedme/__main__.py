@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from timeit import default_timer
 from typing import Callable
 
-from playsound import playsound
+import simpleaudio as sa
 
 sys.path.append(".")
 sys.path.append("focusedme")
@@ -87,7 +87,8 @@ class View:
 
     @classmethod
     def ring_bell(cls, PATH: str) -> None:
-        playsound(in_app_path(PATH))
+        wave_obj = sa.WaveObject.from_wave_file(in_app_path(PATH))
+        wave_obj.play()
 
     def __get_colore_type(self, stype: str) -> str:
         """return the type string with the chosen color"""
