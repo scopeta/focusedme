@@ -7,4 +7,3 @@ num_rounds = 3
 [sound]
 sound = True
 path = Ring01.wav
-

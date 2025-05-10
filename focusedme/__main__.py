@@ -7,16 +7,17 @@ The timer will track the sessions and notify the user of completion,
 as well as allow them to control its progress.
 """
 
+from __future__ import annotations
 
+import argparse
 import sys
 import time
-import argparse
-import attr
-
-from timeit import default_timer
-from dataclasses import dataclass
-from playsound import playsound
 from configparser import ConfigParser
+from dataclasses import dataclass, field
+from timeit import default_timer
+from typing import Callable
+
+import simpleaudio as sa
 
 sys.path.append(".")
 sys.path.append("focusedme")
@@ -42,13 +43,14 @@ RESULTS = r"""
 
 GOODBYE = "\n\nThanks for using focusedMe. Goodbye!\n\n"
 
-@attr.s
+
+@dataclass
 class View:
     """class responsible for user interaction through terminal."""
 
     @classmethod
-    def getColor(cls, color):
-        """ Print fore ground colors in terminal
+    def get_color(cls, color: str) -> str:
+        """Print fore ground colors in terminal
         use reset value to cancel all colors
         """
 
@@ -74,7 +76,7 @@ class View:
 
         return dict_color[color]
 
-    def __format_time(self, remainder):
+    def __format_time(self, remainder: int) -> str:
         """Method that receives timer info and format to present
         in the terminal.
         Receives the a time in seconds and return a user friendly string
@@ -84,29 +86,34 @@ class View:
         return "{:00}min {:00}s remaining   ".format(minutes, seconds)
 
     @classmethod
-    def ring_bell(cls, PATH):
-        playsound(in_app_path(PATH))
+    def ring_bell(cls, PATH: str) -> None:
+        wave_obj = sa.WaveObject.from_wave_file(in_app_path(PATH))
+        wave_obj.play()
 
-    def __get_colore_type(self, stype):
+    def __get_colore_type(self, stype: str) -> str:
         """return the type string with the chosen color"""
         colored_type = stype
         if stype == "FOCUS TIME":
-            colored_type = (
-                self.getColor("lightred") + stype + self.getColor("reset")
-            )
+            colored_type = self.get_color("lightred") + stype + self.get_color("reset")
         elif stype == "SHORT BREAK":
             colored_type = (
-                self.getColor("lightgreen") + stype + self.getColor("reset")
+                self.get_color("lightgreen") + stype + self.get_color("reset")
             )
         elif stype == "LONG BREAK":
-            colored_type = (
-                self.getColor("lightblue") + stype + self.getColor("reset")
-            )
+            colored_type = self.get_color("lightblue") + stype + self.get_color("reset")
         return colored_type
 
-    def show_time(self, remainder, num_round, num_session, type_session):
-        """ show timer countdown in terminal. Receives the remainder time
-        for the session and print progress for the user"""
+    def show_time(
+        self, remainder: int, num_round: int, num_session: int, type_session: str
+    ) -> None:
+        """Show timer countdown in terminal.
+
+        Args:
+            remainder: Remaining time in seconds
+            num_round: Current round number
+            num_session: Current session number
+            type_session: Type of session (FOCUS TIME, SHORT BREAK, LONG BREAK)
+        """
 
         colored_type = self.__get_colore_type(
             type_session.replace("_", " ").upper()
@@ -127,13 +134,13 @@ class View:
         )
         print("\r", end="", flush=True)
 
-    def plot(self, logged_data, time_args):
-        """ create text from logged data and return it to be plotted to user
-        in the terminal """
+    def plot(self, logged_data: list[str], time_args: dict[str, int]) -> None:
+        """create text from logged data and return it to be plotted to user
+        in the terminal"""
 
-        print(self.getColor("green"))
+        print(self.get_color("green"))
         print(RESULTS)
-        print(self.getColor("reset"))
+        print(self.get_color("reset"))
 
         for dt in logged_data:
             if "Round" in dt:
@@ -150,11 +157,11 @@ class View:
         print("[legend: (X) completed sessions, (O) skipped sessions]")
         print("______________________________________________________\n")
 
-    def run(self, time_args, sound_args):
-        """ method that orchestrates overal execution """
+    def run(self, time_args: dict[str, int], sound_args: dict[str, str]) -> None:
+        """method that orchestrates overal execution"""
 
         # initialize with parameters informed through cli arguments
-        pomodoro = Pomodoro(time_args, time_args['num_rounds'])
+        pomodoro = Pomodoro(time_args, time_args["num_rounds"])
         rounds = pomodoro.create_rounds()
         log = Log()
         tracker = Tracker(rounds, log)
@@ -179,123 +186,16 @@ class View:
                     sys.exit(0)
 
 
-@attr.s
-class Tracker:
-    """ Control timer according to session durations
-    and trigger log saving and user interface updates
-    """
+@dataclass
+class Round:
+    """class responsible for creating sessions according to user parameters"""
 
-    rounds = attr.ib()
-    log = attr.ib()
-
-    current_round_idx = attr.ib(init=False, default=0)
-
-    def __cur_time(self):
-        return int(default_timer())
-
-    def start(self, show_time, sound_args):
-        """method to process the list of rounds.
-        It tracks and saves progress while sending visual information
-         for the UI function received as a parameter
-        """
-
-        SOUND = sound_args['sound']
-        PATH = sound_args['path']
-
-        # outter loop - runs until end of rounds
-        while True:
-
-            # return the valid round, either a new one if completed
-            # or the next one available
-            self.current_round_idx = self.__get_round()
-            # if the current round is already completed, there is
-            # no round left and the loop should be broken
-            if self.rounds[self.current_round_idx].completed is True:
-                break
-
-            # iterate over all session in a round()
-            cur_round = self.rounds[self.current_round_idx]
-            for i in range(len(cur_round.sessions)):
-                cur_session = cur_round.get_current_session()
-                # set intermmediary value of "skipped"; once the time is up
-                # update session to "done"
-                cur_round.update_session("skipped")
-                self.log.save_rounds(self.rounds)
-
-                remainder = cur_session.length * SECONDS_PER_MIN
-
-                started_at = self.__cur_time()
-
-                while True:
-                    show_time(
-                        remainder=remainder,
-                        num_round=self.current_round_idx + 1,
-                        num_session=cur_round.current_session_idx + 1,
-                        type_session=cur_session.session_type,
-                    )
-                    time.sleep(1)
-                    cur = self.__cur_time()
-                    remainder = max(remainder - (cur - started_at), 0)
-                    started_at = cur
-                    if remainder <= 0:
-                        break
-                cur_round.update_session("done")
-                self.log.save_rounds(self.rounds)
-                if SOUND:
-                    View.ring_bell(PATH)
-
-    def __get_round(self):
-        """" return the current round
-        check if current_round is completed
-        otherwise return a new round
-        """
-
-        if (self.rounds[self.current_round_idx].completed is True) and (
-            self.current_round_idx < len(self.rounds) - 1
-        ):
-            self.current_round_idx += 1
-
-        return self.current_round_idx
-
-
-@attr.s
-class Pomodoro:
-    """main class to store basic pomodoro technique attributes,
-    such as length of sessions.
-    The user should be able to set the number of rounds and length
-    parameter through command line arguments.
-    """
-
-    # init attributes
-    len_args = attr.ib(factory=dict)
-    num_rounds = attr.ib(default=3)
+    len_args: dict[str, int] = field(default_factory=dict)
 
     # non init attributes
-    tracker = attr.ib(init=False)
-
-    def create_rounds(self):
-        """create and return a list of rounds of size equal to num_rounds and
-         configured according to the length attributes.
-        """
-
-        rounds = [Round(self.len_args) for i in range(self.num_rounds)]
-
-        return rounds
-
-
-@attr.s
-class Round:
-    """class that models a pomodoro round composed by multiple sessions.
-    it stores a list of focus sessions and breaks in the sequence they
-    should happen.
-    Both types of sessions are instances of the Session class.
-    """
-
-    len_args = attr.ib()
-
-    sessions = attr.ib(init=False, factory=list)
-    current_session_idx = attr.ib(init=False, default=0)
-    completed = attr.ib(init=False, default=False)
+    sessions: list[Session] = field(default_factory=list)
+    current_session_idx: int = 0
+    completed: bool = False
 
     round_template = (
         "focus_time",
@@ -308,21 +208,21 @@ class Round:
         "long_break",
     )
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         self.sessions = self.__build_new_round(self.len_args)
 
-    def __build_new_round(self, len_args):
-        """ build a list of sessions that will define this round
+    def __build_new_round(self, len_args: dict[str, int]) -> list[Session]:
+        """build a list of sessions that will define this round
         acording to len_args
         """
-        sessions = [
-            Session(session_type, len_args[session_type])
-            for session_type in self.round_template
-        ]
+        sessions = []
+        for session_type in self.round_template:
+            session = Session(session_type, len_args[session_type])
+            sessions.append(session)
         return sessions
 
     # def completed(self)
-    def update_session(self, status):
+    def update_session(self, status: str) -> None:
         """update session object with status and set
         the current session reference"""
 
@@ -336,9 +236,8 @@ class Round:
         ):  # done and not the last one
             self.current_session_idx += 1
 
-    def get_current_session(self):
-        """return the instance of the current session.
-        """
+    def get_current_session(self) -> "Session":
+        """return the instance of the current session."""
 
         # if the session has already been skipped, go to next session
         if (
@@ -352,29 +251,32 @@ class Round:
 
 @dataclass
 class Session:
-    """data class that store the attributes of different types of sessions"""
+    """class responsible for storing session data"""
 
-    session_type: str
-    length: int
-    status: int = "not started"  # other possible value: skipped, done
+    session_type: str = ""
+    length: int = 0
+    status: str = "not started"  # other possible value: skipped, done
 
 
-@attr.s
+@dataclass
 class Log:
-    """ stores progress data for tracked rounds
+    """stores progress data for tracked rounds
     and provide text output with summary data
     to be plotted
     """
 
-    tracked_rounds = attr.ib(factory=list)
+    tracked_rounds: list[Round] = field(default_factory=list)
 
-    def save_rounds(self, tracked_rounds):
-        """ save all tracked rounds
-        """
+    def save_rounds(self, tracked_rounds: list[Round]) -> None:
+        """save all tracked rounds"""
         self.tracked_rounds = tracked_rounds
 
-    def plot_results(self, plot, time_args):
-        """ return user friendly text with completion information
+    def plot_results(
+        self,
+        plot: Callable[[list[str], dict[str, int]], None],
+        time_args: dict[str, int],
+    ) -> None:
+        """return user friendly text with completion information
         about user's focus sessions
         """
 
@@ -385,24 +287,25 @@ class Log:
         graphic = []
         for i in range(len(self.tracked_rounds)):
             graphic.append("Round #" + str(i + 1) + ": ")
-            graphic.append(
-                [
-                    "X" if s.status == "done" else "O"
-                    for s in self.tracked_rounds[i].sessions
-                    if s.session_type == "focus_time"
-                ]
+            session_status = "".join(
+                "X" if s.status == "done" else "O"
+                for s in self.tracked_rounds[i].sessions
+                if s.session_type == "focus_time"
             )
+            graphic.append(session_status)
 
-        plot(graphic, time_args )
+        plot(graphic, time_args)
 
-@attr.s
+
+@dataclass
 class Config:
     """data class that store the attributes of
     different default values used on the program
     """
-    def load_init():
-        """ return the a object array with the lenght os the default values
-        """
+
+    @staticmethod
+    def load_init() -> tuple[dict[str, int], dict[str, str]]:
+        """return the a object array with the lenght os the default values"""
         file = in_app_path("../config/fm.init")
         config = ConfigParser()
         config.read(file)
@@ -410,64 +313,169 @@ class Config:
         time_args = {}
         sound_args = {}
 
+        for section in list(config["time"]):
+            time_args[section] = int(config["time"][section])
 
-        for section in list(config['time']):
-            time_args[section] = int(config['time'][section])
+        for section in list(config["sound"]):
+            sound_args[section] = str(config["sound"][section])
 
-        for section in list(config['sound']):
-            sound_args[section] = str(config['sound'][section])
-
-        if sound_args['sound']:
-            SOUND = bool(sound_args['sound'])
+        if sound_args["sound"]:
+            bool(sound_args["sound"])
 
         return time_args, sound_args
 
-    def save_init(time_args, sound_args):
-        """ save the new values as the default values
-        """
+    @staticmethod
+    def save_init(time_args: dict[str, int], sound_args: dict[str, str]) -> None:
+        """save the new values as the default values"""
         file = in_app_path("../config/fm.init")
         config = ConfigParser()
         config.read(file)
 
-        for section in list(config['time']):
-            config.set('time',section, str(time_args[section]))
+        for section in list(config["time"]):
+            config.set("time", section, str(time_args[section]))
 
-        for section in list(config['sound']):
-            config.set('sound',section, str(sound_args[section]))
+        for section in list(config["sound"]):
+            config.set("sound", section, str(sound_args[section]))
 
-        with open(file, 'w') as configfile:
+        with open(file, "w") as configfile:
             config.write(configfile)
 
-
-    def show_init(time_args, sound_args):
-        """ prints the 'time' values that are saved in the init files.
-        """
+    @staticmethod
+    def show_init(time_args: dict[str, int], sound_args: dict[str, str]) -> None:
+        """prints the 'time' values that are saved in the init files."""
         file = in_app_path("../config/fm.init")
         config = ConfigParser()
         config.read(file)
 
         print("Default Values:")
-        print(View.getColor("green") + "   Focus Time: " + str(time_args["focus_time"]))
-        print(View.getColor("orange") + "   Short Break: " + str(time_args["short_break"]))
-        print(View.getColor("red") + "   Long Break: " + str(time_args["long_break"]))
-        print(View.getColor("blue") + "   Rounds: " + str(time_args["num_rounds"]))
-        print(View.getColor("purple") + "   Sound: " + str(sound_args["sound"]))
-        print(View.getColor("pink") + "   Sound File: " + str(sound_args["path"]))
-        print( View.getColor("reset") )
+        print(
+            View.get_color("green") + "   Focus Time: " + str(time_args["focus_time"])
+        )
+        print(
+            View.get_color("orange")
+            + "   Short Break: "
+            + str(time_args["short_break"])
+        )
+        print(View.get_color("red") + "   Long Break: " + str(time_args["long_break"]))
+        print(View.get_color("blue") + "   Rounds: " + str(time_args["num_rounds"]))
+        print(View.get_color("purple") + "   Sound: " + str(sound_args["sound"]))
+        print(View.get_color("pink") + "   Sound File: " + str(sound_args["path"]))
+        print(View.get_color("reset"))
 
-def main():
-    """ parse cli arguments and start sequence of object calls"""
+
+@dataclass
+class Pomodoro:
+    """class responsible for creating rounds according to user parameters"""
+
+    len_args: dict[str, int] = field(default_factory=dict)
+    num_rounds: int = 3
+
+    # non init attributes
+    tracker: list = field(default_factory=list)
+
+    def create_rounds(self) -> list[Round]:
+        """create and return a list of rounds of size equal to num_rounds and
+        configured according to the length attributes.
+        """
+        rounds = [Round(self.len_args) for _ in range(self.num_rounds)]
+
+        return rounds
+
+
+@dataclass
+class Tracker:
+    """Control timer according to session durations
+    and trigger log saving and user interface updates
+    """
+
+    rounds: list[Round] = field(default_factory=list)
+    log: Log = field(default_factory=Log)
+    current_round_idx: int = 0
+
+    def __cur_time(self) -> int:
+        return int(default_timer())
+
+    def start(
+        self,
+        show_time: Callable[[int, int, int, str], None],
+        sound_args: dict[str, str],
+    ) -> None:
+        """method to process the list of rounds.
+        It tracks and saves progress while sending visual information
+         for the UI function received as a parameter
+        """
+
+        SOUND = sound_args["sound"]
+        PATH = sound_args["path"]
+
+        # outter loop - runs until end of rounds
+        while True:
+
+            # return the valid round, either a new one if completed
+            # or the next one available
+            self.current_round_idx = self.__get_round()
+            # if the current round is already completed, there is
+            # no round left and the loop should be broken
+            if self.rounds[self.current_round_idx].completed:
+                break
+
+            # iterate over all session in a round()
+            cur_round = self.rounds[self.current_round_idx]
+            for _ in range(len(cur_round.sessions)):
+                cur_session = cur_round.get_current_session()
+                # set intermmediary value of "skipped"; once the time is up
+                # update session to "done"
+                cur_round.update_session("skipped")
+                self.log.save_rounds(self.rounds)
+
+                remainder = cur_session.length * SECONDS_PER_MIN
+
+                started_at = self.__cur_time()
+
+                while True:
+                    show_time(
+                        remainder,
+                        self.current_round_idx + 1,
+                        cur_round.current_session_idx + 1,
+                        cur_session.session_type,
+                    )
+                    time.sleep(1)
+                    cur = self.__cur_time()
+                    remainder = max(remainder - (cur - started_at), 0)
+                    started_at = cur
+                    if remainder <= 0:
+                        break
+                cur_round.update_session("done")
+                self.log.save_rounds(self.rounds)
+                if SOUND:
+                    View.ring_bell(PATH)
+
+    def __get_round(self) -> int:
+        """Return the current round
+        check if current_round is completed
+        otherwise return a new round
+        """
+        if (self.rounds[self.current_round_idx].completed) and (
+            self.current_round_idx < len(self.rounds) - 1
+        ):
+            self.current_round_idx += 1
+
+        return self.current_round_idx
+
+
+def main() -> None:
+    """parse cli arguments and start sequence of object calls"""
 
     print(BANNER, "\n")
 
     print(
-        View.getColor("green")
+        View.get_color("green")
         + " __ "
-        + View.getColor("reset")
+        + View.get_color("reset")
         + "A Pomodoro Timer"
-        + View.getColor("red")
+        + View.get_color("red")
         + " ___"
-        + View.getColor("reset")
+        + View.get_color("reset")
         + "\n\n"
     )
     parser = argparse.ArgumentParser(
@@ -508,20 +516,19 @@ def main():
         "--save",
         action="store_true",
         help="save the duration in minutes os the session/break as new default values",
-
     )
 
     args = parser.parse_args()
     time_args, sound_args = Config.load_init()
     # dictionary that store Pomodor initialization parameters
     if args.focus_time:
-        time_args['focus_time'] = args.focus_time
+        time_args["focus_time"] = args.focus_time
     if args.short_break:
-        time_args['short_break'] = args.short_break
+        time_args["short_break"] = args.short_break
     if args.long_break:
-        time_args['long_break'] = args.long_break
+        time_args["long_break"] = args.long_break
     if args.num_rounds:
-        time_args['num_rounds'] = args.num_rounds
+        time_args["num_rounds"] = args.num_rounds
     if args.save:
         Config.save_init(time_args, sound_args)
         Config.show_init(time_args, sound_args)

@@ -49,6 +49,8 @@ markdown_extensions:
 
 plugins:
   - search
+  - autorefs:
+      link_titles: true
   - mkdocstrings:
       default_handler: python
       handlers:

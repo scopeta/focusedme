@@ -6,12 +6,13 @@ focusedMe
 .. image:: https://img.shields.io/pypi/v/focusedme.svg
         :target: https://pypi.python.org/pypi/focusedme
 
-.. image:: https://travis-ci.com/scopeta/focusedme.svg?branch=master
-        :target: https://travis-ci.com/scopeta/focusedme        
+.. image:: https://github.com/scopeta/focusedme/actions/workflows/ci.yml/badge.svg
+        :target: https://github.com/scopeta/focusedme/actions/workflows/ci.yml
+        :alt: CI Status
 
-.. image:: https://readthedocs.org/projects/focusedme/badge/?version=latest
-        :target: https://focusedme.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
+.. image:: https://github.com/scopeta/focusedme/actions/workflows/docs.yml/badge.svg
+        :target: https://scopeta.github.io/focusedme/
+        :alt: Documentation
 
 
 
@@ -28,7 +29,7 @@ Installation and usage
 Install via pip
     $ pip install focusedme
 
-Read instructions 
+Read instructions
     $ focusedme -h
 
 Common usage (default pomodoro values)
