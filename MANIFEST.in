@@ -4,7 +4,7 @@ include HISTORY.rst
 include LICENSE
 include README.rst
 include focusedme/requirements.txt
-include focusedme/Ring01.wav 
+include focusedme/Ring01.wav
 
 recursive-include tests *
 recursive-exclude * __pycache__
