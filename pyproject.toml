@@ -50,6 +50,7 @@ tox = "^4.8.0"
 mkdocs-material = "^9.2.0"
 mkdocstrings = { extras = ["python"], version = "^0.22.0" }
 hypothesis = "^6.82.6"
+types-setuptools = "^80.3.0.20250505"
 
 [build-system]
 requires = ["poetry-core>=1.5.1"]
