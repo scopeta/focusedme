@@ -6,8 +6,6 @@ to solve in app path references
 
 import os
 import time
-
-
 from typing import Callable
 
 

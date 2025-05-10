@@ -15,7 +15,7 @@ import time
 from configparser import ConfigParser
 from dataclasses import dataclass, field
 from timeit import default_timer
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import Callable
 
 from playsound import playsound
 
@@ -183,7 +183,6 @@ class View:
                 else:
                     print(GOODBYE)
                     sys.exit(0)
-
 
 
 @dataclass
@@ -362,6 +361,7 @@ class Config:
         print(View.get_color("pink") + "   Sound File: " + str(sound_args["path"]))
         print(View.get_color("reset"))
 
+
 @dataclass
 class Pomodoro:
     """class responsible for creating rounds according to user parameters"""
@@ -379,6 +379,7 @@ class Pomodoro:
         rounds = [Round(self.len_args) for _ in range(self.num_rounds)]
 
         return rounds
+
 
 @dataclass
 class Tracker:
@@ -409,15 +410,15 @@ class Tracker:
         # outter loop - runs until end of rounds
         while True:
 
-                # return the valid round, either a new one if completed
-                # or the next one available
+            # return the valid round, either a new one if completed
+            # or the next one available
             self.current_round_idx = self.__get_round()
-                # if the current round is already completed, there is
-                # no round left and the loop should be broken
+            # if the current round is already completed, there is
+            # no round left and the loop should be broken
             if self.rounds[self.current_round_idx].completed:
-                    break
+                break
 
-                # iterate over all session in a round()
+            # iterate over all session in a round()
             cur_round = self.rounds[self.current_round_idx]
             for _ in range(len(cur_round.sessions)):
                 cur_session = cur_round.get_current_session()
@@ -432,11 +433,11 @@ class Tracker:
 
                 while True:
                     show_time(
-                            remainder,
-                            self.current_round_idx + 1,
+                        remainder,
+                        self.current_round_idx + 1,
                         cur_round.current_session_idx + 1,
-                            cur_session.session_type
-                        )
+                        cur_session.session_type,
+                    )
                     time.sleep(1)
                     cur = self.__cur_time()
                     remainder = max(remainder - (cur - started_at), 0)
@@ -459,9 +460,6 @@ class Tracker:
             self.current_round_idx += 1
 
         return self.current_round_idx
-
-
-
 
 
 def main() -> None:
