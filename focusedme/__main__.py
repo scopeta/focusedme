@@ -10,6 +10,7 @@ as well as allow them to control its progress.
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 import time
 from configparser import ConfigParser
@@ -87,8 +88,20 @@ class View:
 
     @classmethod
     def ring_bell(cls, PATH: str) -> None:
-        wave_obj = sa.WaveObject.from_wave_file(in_app_path(PATH))
-        wave_obj.play()
+        """
+        Play a notification sound: use 'afplay' on macOS to avoid simpleaudio issues,
+        otherwise use simpleaudio.
+        """
+        audio_path = in_app_path(PATH)
+        try:
+            if sys.platform == "darwin":
+                subprocess.run(["afplay", audio_path], check=True)
+            else:
+                wave_obj = sa.WaveObject.from_wave_file(audio_path)
+                wave_obj.play()
+        except Exception:
+            # ignore any playback errors
+            pass
 
     def __get_colore_type(self, stype: str) -> str:
         """return the type string with the chosen color"""
