@@ -43,6 +43,9 @@ jobs:
       - name: Build documentation
         run: poetry run mkdocs build
 
+      - name: Verify build output
+        run: test -d site && echo "Site directory exists." || (echo "Site directory does not exist!" && exit 1)
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
