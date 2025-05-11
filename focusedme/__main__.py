@@ -221,7 +221,7 @@ class Round:
         "long_break",
     )
 
-    def __attrs_post_init__(self) -> None:
+    def __post_init__(self) -> None:
         self.sessions = self.__build_new_round(self.len_args)
 
     def __build_new_round(self, len_args: dict[str, int]) -> list[Session]:

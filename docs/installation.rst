@@ -44,7 +44,13 @@ Once you have a copy of the source, you can install it with:
 
 .. code-block:: console
 
-    $ python setup.py install
+    $ poetry install
+
+Alternatively, install in editable mode with pip:
+
+.. code-block:: console
+
+    $ pip install -e .
 
 
 .. _Github repo: https://github.com/scopeta/focusedme
