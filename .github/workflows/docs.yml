@@ -43,6 +43,9 @@ jobs:
       - name: Build documentation
         run: poetry run mkdocs build
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v2
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
