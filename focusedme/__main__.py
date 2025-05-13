@@ -320,10 +320,26 @@ class Config:
     @staticmethod
     def load_init() -> tuple[dict[str, int], dict[str, str]]:
         """return the a object array with the lenght os the default values"""
-        file = in_app_path("../config/fm.init")
+        import os
+
+        # locate fm.init in package data
+        file = in_app_path("config/fm.init")
+        # fallback to project root config directory
+        if not os.path.exists(file):
+            cwd_cfg = os.path.join(os.getcwd(), "config", "fm.init")
+            if os.path.exists(cwd_cfg):
+                file = cwd_cfg
         config = ConfigParser()
         config.read(file)
 
+        # populate defaults if sections missing
+        if "time" not in config or "sound" not in config:
+            return {
+                "focus_time": 25,
+                "short_break": 5,
+                "long_break": 25,
+                "num_rounds": 3,
+            }, {"sound": "True", "path": "Ring01.wav"}
         time_args = {}
         sound_args = {}
 
