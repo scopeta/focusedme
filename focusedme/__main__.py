@@ -18,7 +18,10 @@ from dataclasses import dataclass, field
 from timeit import default_timer
 from typing import Callable
 
-import simpleaudio as sa
+try:
+    import simpleaudio as sa
+except ImportError:
+    sa = None
 
 sys.path.append(".")
 sys.path.append("focusedme")
