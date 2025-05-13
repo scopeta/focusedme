@@ -23,9 +23,7 @@ try:
 except ImportError:
     sa = None
 
-sys.path.append(".")
-sys.path.append("focusedme")
-from util import in_app_path  # noqa: E402
+from focusedme.util import in_app_path  # noqa: E402
 
 BANNER = r"""
   __                              _ __  __
