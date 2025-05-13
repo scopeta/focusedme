@@ -21,7 +21,7 @@ A minimalist Pomodoro timer that runs in your terminal
 
 
 * Free software: MIT license
-* Documentation: https://focusedme.readthedocs.io.
+* Documentation: https://scopeta.github.io/focusedme/
 
 
 Installation and usage
@@ -62,16 +62,3 @@ The timer currently includes the following features:
 - Plays a sound to alert the user when a session is completed and a new one is about to start
 - Allows user to skip or pause a session or stop timer
 - Allows user to visualize information about progress
-
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
-`JaDogg_: <https://github.com/JaDogg/pydoro>`_ for the in_app_path function in util.py module
-
-`TaylorSMarks: <https://github.com/TaylorSMarks/playsound>`_ for the playsound module

@@ -500,7 +500,7 @@ def main() -> None:
 
     print(
         View.get_color("green")
-        + " __ "
+        + "___ "
         + View.get_color("reset")
         + "A Pomodoro Timer"
         + View.get_color("red")

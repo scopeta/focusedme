@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "focusedme"
-version = "0.1.44"
+version = "0.1.45"
 description = "A minimalist Pomodoro timer that runs in your terminal"
 authors = ["Fabio Scopeta <scopeta@gmail.com>"]
 license = "MIT"
 readme = "README.rst"
 homepage = "https://github.com/scopeta/focusedme"
 repository = "https://github.com/scopeta/focusedme"
-documentation = "https://focusedme.readthedocs.io"
+documentation = "https://focusedme.github.io"  # update docs URL to GitHub Pages
 keywords = ["pomodoro", "timer", "productivity", "terminal", "cli"]
 classifiers = [
     "Development Status :: 4 - Beta",
