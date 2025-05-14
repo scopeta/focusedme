@@ -2,7 +2,7 @@ name: Documentation
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "development"]
   workflow_dispatch:
 
 permissions:
@@ -39,15 +39,15 @@ jobs:
         run: poetry install --no-interaction --with dev
 
       - name: Build documentation
-        run: make -C docs html
+        run: poetry run make -C docs html
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: docs/_build/html
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3
