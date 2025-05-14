@@ -36,13 +36,13 @@ Common usage (default pomodoro values)
     $ focusedme
 
 Platform Support
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 * macOS: Uses built-in afplay for audio
 * Windows: Uses playsound library (no C++ compiler needed)
 * Linux/Other: Uses simpleaudio library
 
 Alternative Installation
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 Windows users who face issues can use the provided requirements file:
 
 .. code-block:: console
