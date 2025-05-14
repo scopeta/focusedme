@@ -2,11 +2,15 @@ name: Documentation
 
 on:
   push:
-    branches: ["main", "master"]
+
+    branches: ["main"]
+
   workflow_dispatch:
 
 jobs:
+
   build-and-deploy:
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,3 +46,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: docs/_build/html
+
