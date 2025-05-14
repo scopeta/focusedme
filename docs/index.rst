@@ -7,6 +7,7 @@ Welcome to focusedMe's documentation!
 
    readme
    installation
+   windows_install
    usage
    modules
    contributing

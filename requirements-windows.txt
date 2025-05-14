@@ -1,0 +1,4 @@
+# FocusedMe Requirements for Windows
+# Windows users can simply run: pip install -r requirements-windows.txt
+playsound>=1.3.0
+rich>=13.5.0

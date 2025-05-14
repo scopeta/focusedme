@@ -5,6 +5,11 @@ traditionally 25 minutes in length, separated by short or long breaks.
 Each session is known as a pomodoro.
 The timer will track the sessions and notify the user of completion,
 as well as allow them to control its progress.
+
+Platform-specific audio support:
+- Windows: Uses playsound library
+- macOS: Uses built-in afplay command
+- Linux/Others: Uses simpleaudio library
 """
 
 from __future__ import annotations
@@ -22,6 +27,11 @@ try:
     import simpleaudio as sa
 except ImportError:
     sa = None
+
+try:
+    from playsound import playsound
+except ImportError:
+    playsound = None
 
 from focusedme.util import in_app_path  # noqa: E402
 
@@ -90,14 +100,18 @@ class View:
     @classmethod
     def ring_bell(cls, PATH: str) -> None:
         """
-        Play a notification sound: use 'afplay' on macOS to avoid simpleaudio issues,
-        otherwise use simpleaudio.
+        Play a notification sound based on the platform:
+        - macOS: use 'afplay'
+        - Windows: use playsound
+        - Others: use simpleaudio
         """
         audio_path = in_app_path(PATH)
         try:
             if sys.platform == "darwin":
                 subprocess.run(["afplay", audio_path], check=True)
-            else:
+            elif sys.platform == "win32" and playsound is not None:
+                playsound(audio_path)
+            elif sa is not None:
                 wave_obj = sa.WaveObject.from_wave_file(audio_path)
                 wave_obj.play()
         except Exception:

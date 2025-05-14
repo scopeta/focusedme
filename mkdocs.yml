@@ -3,4 +3,12 @@ site_description: A minimalist Pomodoro timer that runs in your terminal
 repo_url: https://github.com/scopeta/focusedme
 repo_name: scopeta/focusedme
 
-# Remove MkDocs config now that Sphinx docs are used
+nav:
+  - Home: index.md
+  - Installation:
+    - General: installation.rst
+    - Windows: windows_install.md
+  - Usage: usage.rst
+  - Contributing: contributing.rst
+  - History: history.rst
+  - Authors: authors.rst

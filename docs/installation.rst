@@ -22,6 +22,24 @@ you through the process.
 .. _pip: https://pip.pypa.io
 .. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
 
+Platform-specific notes
+-----------------------
+
+Windows
+~~~~~~~
+
+FocusedMe now supports Windows without requiring Visual C++ Build Tools! See the :doc:`Windows Installation Guide <windows_install>` for details.
+
+macOS
+~~~~~
+
+On macOS, FocusedMe uses the built-in ``afplay`` command for audio notifications, so no additional dependencies are required.
+
+Linux
+~~~~~
+
+On Linux systems, FocusedMe uses the ``simpleaudio`` library, which may require additional system dependencies depending on your distribution.
+
 
 From sources
 ------------
