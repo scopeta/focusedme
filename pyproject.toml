@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "focusedme"
-version = "0.1.33"
+version = "0.1.48"
 description = "A minimalist Pomodoro timer that runs in your terminal"
 authors = ["Fabio Scopeta <scopeta@gmail.com>"]
 license = "MIT"
 readme = "README.rst"
 homepage = "https://github.com/scopeta/focusedme"
 repository = "https://github.com/scopeta/focusedme"
-documentation = "https://focusedme.readthedocs.io"
+documentation = "https://scopeta.github.io/focusedme/"  # point to GitHub Pages site
 keywords = ["pomodoro", "timer", "productivity", "terminal", "cli"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -20,7 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Office/Business :: Time Management",
+    "Topic :: Office/Business",
     "Topic :: Utilities",
 ]
 packages = [
@@ -35,10 +35,9 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-simpleaudio = "^1.0.4"
-typer = "^0.9.0"
-rich = "^13.5.0"
+python      = "^3.9"
+simpleaudio = { version = "^1.0.4", markers = 'sys_platform != "darwin"' }
+rich        = "^13.5.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
@@ -54,6 +53,9 @@ hypothesis = "^6.82.6"
 types-setuptools = "^80.3.0.20250505"
 mkdocs-autorefs = "^1.4.1"
 poetry-dynamic-versioning = "^0.13.1"
+typer       = "^0.9.0"  # moved from runtime
+sphinx = "^7.2.0"  # add Sphinx for building docs
+alabaster = "^0.7.12"  # Sphinx default theme
 
 [build-system]
 requires = ["poetry-core>=1.5.1"]
