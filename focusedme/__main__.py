@@ -7,7 +7,7 @@ The timer will track the sessions and notify the user of completion,
 as well as allow them to control its progress.
 
 Platform-specific audio support:
-- Windows: Uses playsound library
+- Windows: Uses built-in winsound library
 - macOS: Uses built-in afplay command
 - Linux/Others: Uses simpleaudio library
 """
@@ -28,10 +28,12 @@ try:
 except ImportError:
     sa = None
 
-try:
-    from playsound import playsound
-except ImportError:
-    playsound = None
+# Import winsound for Windows platforms
+if sys.platform == "win32":
+    try:
+        import winsound
+    except ImportError:
+        winsound = None
 
 from focusedme.util import in_app_path  # noqa: E402
 
@@ -101,16 +103,16 @@ class View:
     def ring_bell(cls, PATH: str) -> None:
         """
         Play a notification sound based on the platform:
-        - macOS: use 'afplay'
-        - Windows: use playsound
+        - macOS: use 'afplay' command
+        - Windows: use winsound (built-in)
         - Others: use simpleaudio
         """
         audio_path = in_app_path(PATH)
         try:
             if sys.platform == "darwin":
                 subprocess.run(["afplay", audio_path], check=True)
-            elif sys.platform == "win32" and playsound is not None:
-                playsound(audio_path)
+            elif sys.platform == "win32" and "winsound" in sys.modules:
+                winsound.PlaySound(audio_path, winsound.SND_FILENAME)
             elif sa is not None:
                 wave_obj = sa.WaveObject.from_wave_file(audio_path)
                 wave_obj.play()

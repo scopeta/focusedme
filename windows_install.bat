@@ -16,10 +16,7 @@ REM Upgrade pip
 echo Upgrading pip...
 python -m pip install --upgrade pip
 
-REM Install focusedme with playsound for Windows
-echo Installing FocusedMe dependencies...
-python -m pip install playsound>=1.3.0 rich>=13.5.0
-
+REM Install focusedme (no special dependencies needed for Windows)
 echo Installing FocusedMe...
 python -m pip install focusedme
 
@@ -29,6 +26,11 @@ echo.
 echo     focusedme
 echo.
 echo For help, run:
+echo.
+echo     focusedme -h
+echo.
+
+pause
 echo.
 echo     focusedme -h
 echo.

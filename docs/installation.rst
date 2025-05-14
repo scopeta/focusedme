@@ -28,7 +28,7 @@ Platform-specific notes
 Windows
 ~~~~~~~
 
-FocusedMe now supports Windows without requiring Visual C++ Build Tools! See the :doc:`Windows Installation Guide <windows_install>` for details.
+FocusedMe on Windows uses the built-in ``winsound`` module for audio notifications, with no additional dependencies required!
 
 macOS
 ~~~~~

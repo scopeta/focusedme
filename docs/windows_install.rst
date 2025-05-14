@@ -5,31 +5,18 @@ Windows Installation
 Installing focusedMe on Windows
 -------------------------------
 
-``focusedMe`` now supports Windows without requiring Microsoft Visual C++ Build Tools. To install:
+``focusedMe`` on Windows now uses the built-in ``winsound`` module for audio notifications, with no additional dependencies required! To install:
 
 .. code-block:: console
 
     pip install focusedme
 
-Troubleshooting
---------------
-
-If you encounter any issues:
-
-1. Make sure you have the latest version of pip:
-
-   .. code-block:: console
-
-      python -m pip install --upgrade pip
-
-2. If you're still experiencing problems, please report the issue on our GitHub repository:
-   https://github.com/scopeta/focusedme/issues
-
 Features on Windows
 ------------------
 
-- Audio notifications use the ``playsound`` library instead of ``simpleaudio``
-- All other functionality works the same as on other platforms
+- Audio notifications use the built-in ``winsound`` module
+- No C++ compiler or additional dependencies needed
+- All functionality works the same as on other platforms
 
 Usage
 -----

@@ -37,18 +37,9 @@ Common usage (default pomodoro values)
 
 Platform Support
 ~~~~~~~~~~~~~~~~
-* macOS: Uses built-in afplay for audio
-* Windows: Uses playsound library (no C++ compiler needed)
-* Linux/Other: Uses simpleaudio library
-
-Alternative Installation
-~~~~~~~~~~~~~~~~~~~~~~~~
-Windows users who face issues can use the provided requirements file:
-
-.. code-block:: console
-
-    pip install -r requirements-windows.txt
-    pip install focusedme
+* **Windows**: Uses built-in ``winsound`` module - no extra dependencies required!
+* **macOS**: Uses built-in ``afplay`` command - no extra dependencies required!
+* **Linux/Other**: Uses ``simpleaudio`` library, automatically installed with pip
 
 .. image:: https://raw.githubusercontent.com/scopeta/focusedme/master/docs/images/UI.png
 

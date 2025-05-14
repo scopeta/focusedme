@@ -2,6 +2,14 @@
 History
 =======
 
+0.1.83 (2025-05-14)
+-------------------
+
+* Fixed Windows installation by using built-in winsound module
+* Removed problematic playsound dependency
+* Enhanced cross-platform audio support
+* Simplified installation process for all platforms
+
 0.1.79 (2025-05-14)
 -------------------
 
