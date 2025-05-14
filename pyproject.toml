@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "focusedme"
-version = "0.1.54"
+version = "0.1.55"
 description = "A minimalist Pomodoro timer that runs in your terminal"
 authors = ["Fabio Scopeta <scopeta@gmail.com>"]
 license = "MIT"
