@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.rst"
 homepage = "https://github.com/scopeta/focusedme"
 repository = "https://github.com/scopeta/focusedme"
-documentation = "https://focusedme.github.io"  # update docs URL to GitHub Pages
+documentation = "https://scopeta.github.io/focusedme/"  # point to GitHub Pages site
 keywords = ["pomodoro", "timer", "productivity", "terminal", "cli"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -54,6 +54,8 @@ types-setuptools = "^80.3.0.20250505"
 mkdocs-autorefs = "^1.4.1"
 poetry-dynamic-versioning = "^0.13.1"
 typer       = "^0.9.0"  # moved from runtime
+sphinx = "^7.2.0"  # add Sphinx for building docs
+alabaster = "^0.7.12"  # Sphinx default theme
 
 [build-system]
 requires = ["poetry-core>=1.5.1"]
