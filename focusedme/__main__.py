@@ -539,7 +539,7 @@ def main() -> None:
         "--long_break",
         type=int,
         metavar="",
-        help="duration in minutes of the focus session, default is 25 mins",
+        help="duration in minutes of the long break, default is 25 mins",
     )
     parser.add_argument(
         "-s",
